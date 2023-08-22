@@ -66,6 +66,9 @@ const createMessageObj = (from: string, message: string): IMessage => {
 };
 
 io.on("connection", (socket) => {
+  console.log("RUM: ", io.sockets.adapter.rooms);
+  console.log("SOCKETS: ", io.sockets.adapter.sids);
+
   console.log("Socket connected:", socket.id);
 
   socket.on("username_connected", (username) => {
@@ -107,6 +110,9 @@ io.on("connection", (socket) => {
         `Welcome to ${newRoomName}, ${usersMap.get(socket.id)}!`
       )
     );
+
+    console.log("RUM JOIN: ", io.sockets.adapter.rooms);
+    console.log("SOCKETS JOIN: ", io.sockets.adapter.sids);
   });
 
   socket.on("leave_room", (room) => {
@@ -119,7 +125,7 @@ io.on("connection", (socket) => {
         "received_message",
         createMessageObj(
           "system",
-          `${usersMap.get(socket.id)} has left ${defaultRoom}!`
+          `${usersMap.get(socket.id)} has left ${room}!`
         )
       );
   });
@@ -130,12 +136,23 @@ io.on("connection", (socket) => {
       "received_message",
       createMessageObj(message.user.username, message.message)
     );
+    console.log("UsersMap:", usersMap);
+  });
+
+  socket.on("user_typing", (username, room) => {
+    console.log("typing info username: ", username);
+    console.log("typing info room: ", room);
+
+    io.in(room).emit("send_typing_info", username);
   });
 
   socket.on("disconnect", () => {
     io.emit("send_public_rooms", getPublicRooms());
-    console.log("Socket disconnected");
+    /// Emit to user in room that user has left
+    usersMap.delete(socket.id);
+    console.log("Socket disconnected", socket.id);
     console.log("All connected sockets: ", io.sockets.adapter.sids);
+    console.log("usersMap: ", usersMap);
   });
 });
 

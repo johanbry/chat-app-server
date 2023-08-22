@@ -55,6 +55,8 @@ const createMessageObj = (from, message) => {
     };
 };
 io.on("connection", (socket) => {
+    console.log("RUM: ", io.sockets.adapter.rooms);
+    console.log("SOCKETS: ", io.sockets.adapter.sids);
     console.log("Socket connected:", socket.id);
     socket.on("username_connected", (username) => {
         socket.join(defaultRoom);
@@ -75,22 +77,33 @@ io.on("connection", (socket) => {
             .in(newRoomName)
             .emit("received_message", createMessageObj("system", `${usersMap.get(socket.id)} has joined ${newRoomName}!`));
         socket.emit("received_message", createMessageObj("system", `Welcome to ${newRoomName}, ${usersMap.get(socket.id)}!`));
+        console.log("RUM JOIN: ", io.sockets.adapter.rooms);
+        console.log("SOCKETS JOIN: ", io.sockets.adapter.sids);
     });
     socket.on("leave_room", (room) => {
         socket.leave(room);
         io.emit("send_public_rooms", getPublicRooms());
         socket
             .in(room)
-            .emit("received_message", createMessageObj("system", `${usersMap.get(socket.id)} has left ${defaultRoom}!`));
+            .emit("received_message", createMessageObj("system", `${usersMap.get(socket.id)} has left ${room}!`));
     });
     socket.on("message_from_client", (message) => {
         console.log("Client message:", message);
         io.in(message.currentRoom).emit("received_message", createMessageObj(message.user.username, message.message));
+        console.log("UsersMap:", usersMap);
+    });
+    socket.on("user_typing", (username, room) => {
+        console.log("typing info username: ", username);
+        console.log("typing info room: ", room);
+        io.in(room).emit("send_typing_info", username);
     });
     socket.on("disconnect", () => {
         io.emit("send_public_rooms", getPublicRooms());
-        console.log("Socket disconnected");
+        /// Emit to user in room that user has left
+        usersMap.delete(socket.id);
+        console.log("Socket disconnected", socket.id);
         console.log("All connected sockets: ", io.sockets.adapter.sids);
+        console.log("usersMap: ", usersMap);
     });
 });
 server.listen(process.env.PORT || 3000, () => console.log(`Server up and listening on port ${process.env.PORT}`));
