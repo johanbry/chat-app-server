@@ -51,7 +51,7 @@ const createMessageObj = (from, message) => {
     return {
         from,
         message,
-        date: Date.now().toString(),
+        date: new Date(),
     };
 };
 io.on("connection", (socket) => {
@@ -96,12 +96,12 @@ io.on("connection", (socket) => {
     socket.on("user_typing_start", (username, room) => {
         console.log("typing start info username: ", username);
         console.log("typing start info room: ", room);
-        io.in(room).emit("send_typing_start", username, socket.id);
+        socket.in(room).emit("send_typing_start", username, socket.id);
     });
-    socket.on("user_typing_stop", (username, room) => {
-        console.log("typing stop info username: ", username);
+    socket.on("user_typing_stop", (room) => {
+        console.log("typing stop info socketid: ", socket.id);
         console.log("typing stop info room: ", room);
-        io.in(room).emit("send_typing_stop", username);
+        socket.in(room).emit("send_typing_stop", socket.id);
     });
     socket.on("disconnect", () => {
         io.emit("send_public_rooms", getPublicRooms());
