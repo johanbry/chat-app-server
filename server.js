@@ -94,20 +94,23 @@ io.on("connection", (socket) => {
         //console.log("UsersMap:", usersMap);
     });
     socket.on("user_typing_start", (username, room) => {
-        console.log("typing start info username: ", username);
-        console.log("typing start info room: ", room);
+        console.log("START TYPING");
+        // console.log("typing start info username: ", username)
+        // console.log("typing start info room: ", room);
         socket.in(room).emit("send_typing_start", username, socket.id);
     });
     socket.on("user_typing_stop", (room) => {
-        console.log("typing stop info socketid: ", socket.id);
-        console.log("typing stop info room: ", room);
+        console.log("STOP TYPING");
+        // console.log("typing stop info socketid: ", socket.id);
+        // console.log("typing stop info room: ", room);
         socket.in(room).emit("send_typing_stop", socket.id);
     });
     socket.on("disconnect", () => {
         io.emit("send_public_rooms", getPublicRooms());
-        /// Emit to user in room that user has left
+        /// Emit to user in room that user has leftt
         usersMap.delete(socket.id);
         // console.log("Socket disconnected", socket.id);
+        // console.log("Socket in room", io.sockets.adapter.sids);
         // console.log("All connected sockets: ", io.sockets.adapter.sids);
         // console.log("usersMap: ", usersMap);
     });
