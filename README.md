@@ -4,11 +4,11 @@ Group project provided by Medieinstitutet. Task was to create a fullstack chatap
 
 ## Set up and run project
 
-Start server using command below. `Npm run dev` will compile ts files, start server and nodemon.
+Start server in dev mode using commands below.
 
 `npm install`
 
-`npm run dev`
+`npm run dev` (this will compile ts files and start server using nodemon)
 
 ## Learning objectives
 
