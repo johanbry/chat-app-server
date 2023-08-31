@@ -28,4 +28,4 @@ Start server in dev mode using commands below.
 
 ## Frontend repo:
 
-[Visit repo](https://github.com/johanbry/chat-app-client/tree/socket)
+[Visit repo](https://github.com/johanbry/chat-app-client)
