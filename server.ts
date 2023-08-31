@@ -103,8 +103,7 @@ io.on('connection', socket => {
     );
   });
 
-  //!FIXME:
-  socket.on('create_chatroom', newRoomName => {
+  socket.on('create_join_chatroom', newRoomName => {
     socket.join(newRoomName);
     io.emit('send_public_rooms', getPublicRooms());
     // send message to room except socket that user has joined room

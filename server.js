@@ -70,8 +70,7 @@ io.on('connection', socket => {
             .emit('received_message', createMessageObj('system', `${username} has joined ${defaultRoom}!`));
         socket.emit('received_message', createMessageObj('system', `Welcome to ${defaultRoom}, ${username}!`));
     });
-    //!FIXME:
-    socket.on('create_chatroom', newRoomName => {
+    socket.on('create_join_chatroom', newRoomName => {
         socket.join(newRoomName);
         io.emit('send_public_rooms', getPublicRooms());
         // send message to room except socket that user has joined room
